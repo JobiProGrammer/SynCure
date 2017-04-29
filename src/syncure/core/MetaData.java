@@ -153,7 +153,8 @@ public class MetaData {
 
 	
 	private void addList(File source, long time){
-		FileIndexList.add(new MetaFileObject(source.getAbsolutePath(), time));
+		if(!source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("json"))
+			FileIndexList.add(new MetaFileObject(source.getAbsolutePath(), time));
 	}
 	
 	public ArrayList<MetaFileObject> getFileIndexList(){
