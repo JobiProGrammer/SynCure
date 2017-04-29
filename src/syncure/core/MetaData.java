@@ -30,7 +30,7 @@ public class MetaData {
 	private ArrayList<MetaFileObject> FileIndexList = new ArrayList<MetaFileObject>();
 	
 	/**
-	 * Prüft ob das verzeichnis noch nie syncronisiert wurde
+	 * Prüft, ob das Verzeichnis noch nie synchronisiert wurde
 	 * @param path
 	 * @return
 	 */
@@ -66,7 +66,7 @@ public class MetaData {
 		try {
 			fis = new FileInputStream(metaFile);
 		
-			//list alles aus der Datei
+			//liest alles aus der Datei
 			byte[] data = new byte[(int) metaFile.length()];
 			fis.read(data);
 			fis.close();
@@ -74,7 +74,7 @@ public class MetaData {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			
-			//ertsellt die Datei falls sie nicht existiert
+			//erstellt die Datei, falls sie nicht existiert
 			try {
 				metaFile.createNewFile();
 			} catch (IOException e) {
@@ -98,7 +98,7 @@ public class MetaData {
 	}
 	
 	/**
-	 * Schreibe json in die metadata datei
+	 * Schreibe JSON in die metadata Datei
 	 * @param FileIndexList
 	 */
 	public void setData(ArrayList<MetaFileObject> FileIndexList){
@@ -116,14 +116,14 @@ public class MetaData {
 	}
 	
 	/**
-	 * setzte data
+	 * setze data
 	 */
 	public void setData(){
 		setData(FileIndexList);
 	}
 	
 	/**
-	 * Schreibe json vom aktuellen dateisystem
+	 * Schreibe JSON vom aktuellen Dateisystem
 	 */
 	public void writeinitFiles(){
 		initFiles();
@@ -132,7 +132,7 @@ public class MetaData {
 	
 
 	/**
-	 * lese dateien aus
+	 * lese Dateien aus
 	 */
 	public void initFiles(){
 		FileIndexList = new ArrayList<MetaFileObject>();
@@ -143,7 +143,7 @@ public class MetaData {
 		for (File fileEntry : source.listFiles()) {
             if (fileEntry.isDirectory()) {
             	recFolder(fileEntry);
-            //verhindert das die metadata selber dabei ist
+            //verhindert, dass die metadata selber dabei ist
             } else if(!source.getAbsolutePath().contains(".metadata.json")){
             	System.out.println(source.getAbsolutePath());
             	addList(fileEntry, fileEntry.lastModified());
