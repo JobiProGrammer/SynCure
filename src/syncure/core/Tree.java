@@ -142,13 +142,13 @@ public class Tree implements Runnable {
         this.terminated = true;
     }
 
-    public static void main(String[] args) throws IOException,
-            InterruptedException {
-        // Folder we are going to watch
-        // Path folder =
-        // Paths.get(System.getProperty("C:\\Users\\Isuru\\Downloads"));
-
-        new Thread(new Tree(FileSystems.getDefault().getPath("Test"), new Object())).start();
-
-    }
+//    public static void main(String[] args) throws IOException,
+//            InterruptedException {
+//        // Folder we are going to watch
+//        // Path folder =
+//        // Paths.get(System.getProperty("C:\\Users\\Isuru\\Downloads"));
+//
+//        new Thread(new Tree(FileSystems.getDefault().getPath("Test"), new Object())).start();
+//
+//    }
 }
