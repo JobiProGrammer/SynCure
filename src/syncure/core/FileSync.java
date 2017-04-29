@@ -43,7 +43,7 @@ public class FileSync {
      */
     public static void copyFile(File source, File target, boolean encrypt, Config config) {
         FileInputStream fis;
-        if(!source.getAbsolutePath().contains(".metadata.json")){
+        if(source.getAbsolutePath().contains(".metadata.json")){
         	return;
         }
         try {
