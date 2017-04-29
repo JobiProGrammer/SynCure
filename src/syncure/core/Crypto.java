@@ -1,4 +1,4 @@
-package main;
+package syncure.core;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,8 +17,6 @@ import javax.swing.JOptionPane;
 
 
 public class Crypto{
-	//TODO Implementieren von vielen verschlüsslungsstufen
-	//TODO erkennen ob richter schlüssel mit eigener Datei
 	
 	
 	/**
@@ -26,17 +24,22 @@ public class Crypto{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	//Key repräsentiert durch das SecretKeySpec Objekt
 	private SecretKeySpec key;
-	//private File selectedFile;
 	
-	public interface whatToDo{
-		public byte[] what(byte[] text);
-	}
-	
+	/**
+	 * Konstruktor
+	 * @param keyStr Schlüssel als String
+	 */
 	public Crypto(String keyStr){
 		key=Crypto.createKey(keyStr);
 	}
 	
+	/**
+	 * dEncrypt und dDecrypt zum ver und entschlüssel von string oder byte daten mit key
+	 * @param text der zu verschlüsselne text
+	 * @return verschlüsselter string
+	 */
 	public String dEncrypt(String text){
 		return new String(encrypt(text.getBytes(), key));
 	}
@@ -46,14 +49,20 @@ public class Crypto{
 	}
 	
 	
-	public byte[] dEncrypt1(byte[] text){
+	public byte[] dEncrypt(byte[] text){
 		return encrypt(text, key);
 	}
 	
-	public byte[] dDecrypt1(byte[] text){
+	public byte[] dDecrypt(byte[] text){
 		return decrypt(text, key);
 	}
 	
+	
+	/**
+	 * öffnet einen File browser um eine Datei auszuwählen
+	 * @param dir Ordner oder Datei auswählen
+	 * @return ausgewählte datei und 
+	 */
 	private static File chooseDir(boolean dir){
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
@@ -70,12 +79,15 @@ public class Crypto{
 	
 	
 	
-	
+	/**
+	 * verchlüsselt eine Datei, en -> encrypt en=false -> decrypt
+	 * @param selectedFile
+	 * @param en verschlüsseln oder entschlü+sseln
+	 */
 	private void cryptFile(File selectedFile, boolean en){
 		
 		FileInputStream fis;
 		try {
-			//System.out.println(selectedFile.getAbsolutePath().substring(selectedFile.getAbsolutePath().lastIndexOf(".") + 1));
 			if(!en && !selectedFile.getAbsolutePath().substring(selectedFile.getAbsolutePath().lastIndexOf(".") + 1).equals("aes"))
 				return;
 			
@@ -84,11 +96,10 @@ public class Crypto{
 			fis.read(data);
 			fis.close();
 			
-			//data=cryptoMeth.what(data);
 			if(en)
-				data=dEncrypt1(data);
+				data=dEncrypt(data);
 			else
-				data=dDecrypt1(data);
+				data=dDecrypt(data);
 			
 			
 			
@@ -103,34 +114,40 @@ public class Crypto{
 			
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
-	
+	/**
+	 * get den einen Ordnerstrucktur rekursiv durch und ver oder entschlüsselt das Objekt
+	 * @param folder
+	 * @param en
+	 */
 	private void cryptDirRec(File folder, boolean en){
 		for (File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isDirectory()) {
 	        	cryptDirRec(fileEntry, en);
 	        } else {
-	            //System.out.println(fileEntry.getName());
 	        	cryptFile(fileEntry, en);
 	        }
 	    }
 	}
 	
 	
-	
+	/**
+	 * fragt den Nutzer welchen Ordner/Datei er versclüsseln möchte und verschlüsselt
+	 * diese mittels cryptDirRec rekursiv
+	 * @param dir
+	 * @param en
+	 */
 	public void crypt_Dir_File(boolean dir, boolean en){
 		File selectedFile = chooseDir(dir);
 		if(selectedFile==null)
 			return;
 		System.out.println("Selected file: " + selectedFile.getAbsolutePath());
 		System.out.println("Sure you want to en/decrypt that with your Key: ");
-		//Scanner scanner = new Scanner(System.in);
 		String s = readString("Selected file: " + selectedFile.getAbsolutePath() + "\n" + "Sure you want to en/decrypt that with your Key: ");
-		if(   !s.equals("y")){//!scanner.nextLine().equals("y")){
+		if(   !s.equals("y")){
 			System.out.println("Interrupted");
 			return;
 		}
@@ -144,7 +161,11 @@ public class Crypto{
 	
 	
 	
-	
+	/**
+	 * Generiert den Key mittles eines Strings
+	 * @param keyStr
+	 * @return
+	 */
 	public static SecretKeySpec createKey(String keyStr){      
 		try {
 			byte[] key;
@@ -162,6 +183,12 @@ public class Crypto{
 		}     
 	}
 	
+	/**
+	 * verschlüsselt den byte text mittels einem übergeben key (ist statisch)
+	 * @param text
+	 * @param secretKeySpec
+	 * @return
+	 */
 	public static byte[] encrypt(byte[] text, SecretKeySpec secretKeySpec){
 	 
 	      // Verschluesseln
@@ -170,12 +197,7 @@ public class Crypto{
 			cipher = Cipher.getInstance("AES");
 			cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
 		      byte[] encrypted = cipher.doFinal(text);
-		   // bytes zu Base64-String konvertieren (dient der Lesbarkeit)
-		      //BASE64Encoder myEncoder = new BASE64Encoder();
-		      //Base64 b;
-		      //String geheim = Base64.getEncoder().encode(encrypted);//  .encodeToString(encrypted);//   myEncoder.encode(encrypted);
-		      
-		      //return geheim;
+		      // bytes zu Base64-String konvertieren (dient der Lesbarkeit)
 		      return Base64.getEncoder().encode(encrypted);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -183,10 +205,16 @@ public class Crypto{
 		}
 	     
 	}
+	
+	/**
+	 * verschlüsselt den byte text mittels einem übergeben key (ist statisch)
+	 * @param geheim
+	 * @param secretKeySpec
+	 * @return
+	 */
 	public static byte[] decrypt(byte[] geheim, SecretKeySpec secretKeySpec){
 		// BASE64 String zu Byte-Array konvertieren
-	      //BASE64Decoder myDecoder2 = new BASE64Decoder();
-	      byte[] crypted2 = Base64.getDecoder().decode(geheim);//  myDecoder2.decodeBuffer(geheim);
+	      byte[] crypted2 = Base64.getDecoder().decode(geheim);
 	 
 	      // Entschluesseln
 	      
@@ -195,13 +223,18 @@ public class Crypto{
 			cipher2.init(Cipher.DECRYPT_MODE, secretKeySpec);
 			byte[] cipherData2 = cipher2.doFinal(crypted2);
 			return cipherData2;
-		      //return new String(cipherData2);
 		 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+	
+	/**
+	 * liest einen String von der
+	 * @param text
+	 * @return
+	 */
 	public static String readString(String text) {
         JFrame frame = new JFrame();
         String s = JOptionPane.showInputDialog(frame, text);
@@ -212,31 +245,24 @@ public class Crypto{
         return s;
     }
 	
-	public static void doJob(){
-		
-		if(readString("Crypt or Secpass (0/1): ").equals("1")){
-			createPassFile(20, 15);
-			return;
-		}
-		
-		
-		//readString("Enter your Password: ");
-		
-		String pass = readString("Enter your Password: ");
-		Crypto c = new Crypto(pass);
-		if(readString("Encode or decode. 1 vor decode else encode").equals("1")){
-			//System.out.println("hallo");
-			c.crypt_Dir_File(true, false);
-		}else{
-			c.crypt_Dir_File(true, true);
-		}
-		
-	}
-	
+
+	/**
+	 * Generiert im interval eine zufällige zahl
+	 * @param minval
+	 * @param maxval
+	 * @return
+	 */
 	public static int getRandom(int minval, int maxval){
         return minval + (new java.util.Random()).nextInt(maxval-minval+1);
     }
 	
+	/**
+	 * Genreriert ein zufaääliges passwort
+	 * @param len
+	 * @param allSpecial
+	 * @param allowedSpecial
+	 * @return
+	 */
 	public static String createSecurePasswords(int len, boolean allSpecial, String allowedSpecial){
 		String pass = "";
 		if(allSpecial){
@@ -247,37 +273,7 @@ public class Crypto{
 		return pass;
 	}
 	
-	public static void createPassFile(int howMany, int len){
-		File f = chooseDir(false);
-		try {
-			PrintWriter writer = new PrintWriter(f, "UTF-8");
-			for (int i=0; i<howMany; i++){
-				writer.println(createSecurePasswords(len, true, ""));
-			}
-			writer.close();
-			
-			
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
-	
 	
 
-	public static void main(String[] args){
-		doJob();
-		//System.out.println(createSecurePasswords(20, true, ""));
-//		Crypto c = new Crypto("hallo");
-//		c.crypt_Dir_File(true, true);
-//		System.out.println(c.dEncrypt("sadfasdfa"));
-//		System.out.println(c.dDecrypt("1nj3mWRQKZ6JpyoSRIkBQg=="));
-
-	}
 
 }
