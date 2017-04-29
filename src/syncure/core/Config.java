@@ -21,8 +21,8 @@ import static java.nio.file.FileSystem.*;
 public class Config {
 
     private String password;
-    private File localDirectory;
-    private File driveDirectory;
+    private Path localDirectory;
+    private Path driveDirectory;
 
     private static File configFile = new File(getUserDataDirectory()+"config.txt");
 
@@ -143,21 +143,21 @@ public class Config {
         this.password = password;
     }
 
-    public void setLocalDirectory(File localDirectory) {
+    public void setLocalDirectory(Path localDirectory) {
         this.localDirectory = localDirectory;
     }
 
-    public void setDriveDirectory(File driveDirectory) {
+    public void setDriveDirectory(Path driveDirectory) {
         this.driveDirectory = driveDirectory;
     }
 
 
 
-    public File getLocalDirectory() {
+    public Path getLocalDirectory() {
         return localDirectory;
     }
 
-    public File getDriveDirectory() {
+    public Path getDriveDirectory() {
         return driveDirectory;
     }
 
@@ -175,8 +175,8 @@ public class Config {
      */
     private void readInto(ConfigData cd){
     	password = cd.password;
-    	localDirectory = new File(cd.localDirectory);//Paths.get(cd.localDirectory);
-    	driveDirectory = new File(cd.driveDirectory);
+    	localDirectory = Paths.get(cd.localDirectory);
+    	driveDirectory = Paths.get(cd.driveDirectory);
     }
     
     /**
@@ -184,7 +184,7 @@ public class Config {
      * @return erstelle confik objekt
      */
     private ConfigData getInfo(){
-    	return new ConfigData(password, localDirectory.getAbsolutePath(), driveDirectory.getAbsolutePath());
+    	return new ConfigData(password, localDirectory.toAbsolutePath().toString(), driveDirectory.toAbsolutePath().toString());
     }
     
     /**
