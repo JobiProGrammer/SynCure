@@ -3,9 +3,6 @@ package syncure;
 import syncure.core.Config;
 import syncure.core.FileManager;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-
 /**
  * Created by mikonse on 29.04.2017.
  */

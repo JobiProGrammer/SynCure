@@ -47,36 +47,10 @@ public class Config {
 	 * @param configFilePath kann null sein, dann wird /home/.syncure/config.txt genommen
 	 */
     public Config(Path configFilePath) {
-    	if(configFilePath!=null)
-    		configFile = configFilePath.toFile();
-    	readConfig();
-    	
-    	
-    	
-//        List<String> file = null;
-//        try {
-//            file = Files.readAllLines(configFilePath, Charset.defaultCharset());
-//
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        if(file == null){
-//            return;
-//        }
-//        if (file.size() != 3){
-//            System.err.printf("File 'config' represented by %s does not contain exactly 3 entries!", configFilePath.toString());
-//        }
-//        password = file.get(0);
-//        try {
-//            localDirectory = FileSystems.getDefault().getPath(file.get(1));
-//            driveDirectory = FileSystems.getDefault().getPath(file.get(2));
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        crypto = new Crypto(password);
-    }
-    
+		if (configFilePath != null)
+			configFile = configFilePath.toFile();
+		readConfig();
+	}
     
     /**
      * schreibt die aktuellen Daten (zb wenn verändert) in die Datei
@@ -181,6 +155,7 @@ public class Config {
     	password = cd.password;
     	localDirectory = Paths.get(cd.localDirectory);
     	driveDirectory = Paths.get(cd.driveDirectory);
+    	crypto = new Crypto(password);
     }
     
     /**

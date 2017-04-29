@@ -3,6 +3,7 @@ package syncure.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.file.Paths;
 
 /**
  * Created by mikonse on 29.04.2017.
@@ -19,9 +20,11 @@ public class FileSync {
     public static void copyDir(File source, File target, boolean encrypt, Config config) {
         for (File fileEntry : source.listFiles()) {
             if (fileEntry.isDirectory()) {
-                copyDir(source, target, encrypt, config);
+                copyDir(fileEntry, Paths.get(target.getAbsolutePath(), fileEntry.getName()).toFile(), encrypt, config);
             } else {
-                copyFile(source, target, encrypt, config);
+                if (encrypt) {
+                    copyFile(fileEntry, Paths.get(target.getAbsolutePath(), fileEntry.getName() + ".aes").toFile(), encrypt, config);
+                }
             }
         }
     }

@@ -33,8 +33,7 @@ public class Tree implements Runnable {
     }
 
     public ArrayList<File> compare(Tree other) {
-
-
+        return null;
     }
 
 
@@ -68,16 +67,8 @@ public class Tree implements Runnable {
                     while (true) {
                         key = service.take();
 
-                        // Dequeueing events
-                        Kind<?> kind = null;
-                        for (WatchEvent<?> watchEvent : key.pollEvents()) {
-                            // Get the type of the event
-                            kind = watchEvent.kind();
-                            if (ENTRY_CREATE == kind || ENTRY_MODIFY == kind || ENTRY_DELETE == kind) {
-                                // A new Path was created
-                                Path newPath = ((WatchEvent<Path>) watchEvent).context();
-                                lock.notify();
-                            }
+                        synchronized (lock) {
+                            lock.notify();
                         }
 
                         if (!key.reset()) {
@@ -97,8 +88,11 @@ public class Tree implements Runnable {
 
 
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-
+    public static void main(String[] args) throws IOException,
+        InterruptedException {
+        // Folder we are going to watch
+        // Path folder =
+        // Paths.get(System.getProperty("C:\\Users\\Isuru\\Downloads"));
 
         new Thread(new Tree(FileSystems.getDefault().getPath("Test"), new Object())).start();
 
