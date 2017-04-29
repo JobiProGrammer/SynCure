@@ -161,7 +161,7 @@ public class Config {
     
     /**
      * 
-     * @return erstelle confik objekt
+     * @return erstelle config objekt
      */
     private ConfigData getInfo(){
     	return new ConfigData(password, localDirectory.toAbsolutePath().toString(), driveDirectory.toAbsolutePath().toString());
