@@ -93,13 +93,13 @@ public class Tree implements Runnable {
                         + " is not a folder");
             }
         } catch (IOException ioe) {
-            // Folder does not exists
+            // Folder does not exist
             ioe.printStackTrace();
         }
 
         System.out.println("Watching path: " + path);
 
-        // We obtain the file system of the Path
+        // We obtain the file system of the path
         FileSystem fs = path.getFileSystem();
 
         // We create the new WatchService using the new try() block
@@ -133,7 +133,7 @@ public class Tree implements Runnable {
     }
 
     /**
-     * Updates the json file when changes happened
+     * Updates the JSON file when changes happened
      */
     private void updateJson(){
     	MetaData md = new MetaData(path);
