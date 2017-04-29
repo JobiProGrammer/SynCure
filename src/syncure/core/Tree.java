@@ -48,21 +48,15 @@ public class Tree implements Runnable {
         for(MetaFileObject mLocal : localFiles) {
             for(MetaFileObject mDrive : driveFiles) {
                 if(!mDrive.path.contains(".aes")) {
-                    driveFiles.remove(mDrive);
                     continue;
-                }
-                 else {
+                } else {
                     mDrive.path.replace(".aes", "");
                 }
                 if(mLocal.path.equals(mDrive.path)) {
                     if(mLocal.time < mDrive.time) {
                         toSync.add(new File(mDrive.path + ".aes"), new File(mLocal.path));
-                        driveFiles.remove(mDrive);
-                        localFiles.remove(mLocal);
                     } else if(mLocal.time > mDrive.time) {
                         toSync.add(new File(mLocal.path), new File(mDrive.path + ".aes"));
-                        driveFiles.remove(mDrive);
-                        localFiles.remove(mLocal);
                     }
                     break;
                 }
@@ -71,12 +65,18 @@ public class Tree implements Runnable {
             toSync.add(new File(mLocal.path), new File(drive.path.toFile().getAbsolutePath() + mLocal.path.replace(local.path.toFile().getAbsolutePath(), "") + ".aes"));
 
         }
+        boolean found = false;
         for(MetaFileObject mDrive : driveFiles) {
-            if(!mDrive.path.contains(".aes")) {
-                continue;
-            } else {
+            for(MetaFileObject mLocal : localFiles) {
+                if(mDrive.path.replace(".aes", "").equals(mLocal.path)) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) {
                 toSync.add(new File(mDrive.path + ".aes"), new File(local.path.toFile().getAbsolutePath() + mDrive.path.replace(drive.path.toFile().getAbsolutePath(), "")));
             }
+            found = false;
         }
 
         return toSync;
