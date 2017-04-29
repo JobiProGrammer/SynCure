@@ -27,13 +27,15 @@ public class MetaData {
 	
 	public MetaData(Path path) {
 		this.path= path.toFile();
-		this.metaFile = new File(path.toFile().getAbsolutePath() + "\\config.json");
+		this.metaFile = new File(path.toFile().getAbsolutePath() + "\\.metadata.json");
 		
 		
 	}
 	
+
 	
-	public void getData(){
+	
+	public ArrayList<MetaFileObject> getData(){
 		
 		FileInputStream fis;
 		String alldata="";
@@ -65,7 +67,10 @@ public class MetaData {
 			
 		}catch (Exception e){
 			initFiles();
+			setData();
 		}
+		
+		return FileIndexList;
 	}
 	
 	public void setData(){
@@ -100,11 +105,11 @@ public class MetaData {
 	private void addList(File source, long time){
 		FileIndexList.add(new MetaFileObject(source.getAbsolutePath(), time));
 	}
-	public static void main(String[] args) {
-		MetaData md = new MetaData(Paths.get("C:\\Users\\Tobias\\Documents\\GitHub"));
-		md.getData();
-		md.setData();
-	}
+//	public static void main(String[] args) {
+//		MetaData md = new MetaData(Paths.get("C:\\Users\\Tobias\\Documents\\GitHub"));
+//		md.getData();
+//		md.setData();
+//	}
 	
 
 }
