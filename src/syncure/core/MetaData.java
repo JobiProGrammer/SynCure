@@ -17,7 +17,7 @@ import com.google.gson.GsonBuilder;
 
 
 /**
- * MeteData Klasse handelt die Jason Metadatei und sorgt zwischen der kommunikation vom verzeichnisbaum
+ * MetaData Klasse handlet die JSON-Metadatei und sorgt zwischen der Kommunikation vom Verzeichnisbaum
  * @author Tobias
  *
  */
