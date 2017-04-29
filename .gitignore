@@ -3,5 +3,3 @@ RemoteSystemsTempFiles
 .idea
 *.iml
 /bin/
-.project
-.settings
