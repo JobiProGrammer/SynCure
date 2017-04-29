@@ -2,3 +2,7 @@
 RemoteSystemsTempFiles
 .idea
 *.iml
+/bin/
+.classpath
+.project
+.settings
