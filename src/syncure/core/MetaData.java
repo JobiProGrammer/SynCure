@@ -67,8 +67,9 @@ public class MetaData {
 			
 		}catch (Exception e){
 			initFiles();
+			setData();
 		}
-		setData();
+		
 		return FileIndexList;
 	}
 	
