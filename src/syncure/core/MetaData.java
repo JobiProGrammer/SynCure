@@ -135,6 +135,7 @@ public class MetaData {
 	 * lese dateien aus
 	 */
 	public void initFiles(){
+		FileIndexList = new ArrayList<MetaFileObject>();
 		recFolder(path);
 	}
 
