@@ -1,0 +1,2 @@
+# SynCure
+A Hackathon Project
