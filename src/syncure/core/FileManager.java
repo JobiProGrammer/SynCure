@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  * Created by mikonse on 29.04.2017.
  */
-public class FileManager implements Runnable{
+public class FileManager implements Runnable {
 
     Tree localTree;
     Tree remoteTree;
@@ -18,30 +18,30 @@ public class FileManager implements Runnable{
 
     /**
      * Instantiates a FileManager
+     *
      * @param config global Config object
      */
     public FileManager(Config config) {
-    	//updated, checkt ob metadata noch nicht vorliegt und erstellt ggf und synchronisiert one way
-    	if(MetaData.isNew(config.getLocalDirectory()) && MetaData.isNew(config.getDriveDirectory())){
-    		FileSync.copyDir(config.getLocalDirectory().toFile(),
-    				config.getDriveDirectory().toFile(), true, config);
-    		MetaData md = new MetaData(config.getLocalDirectory());
-    		md.writeinitFiles();
-    		md = new MetaData(config.getDriveDirectory());
-    		md.writeinitFiles();
-    	}
-    	
         this.config = config;
         this.terminated = false;
         localTree = new Tree(config.getLocalDirectory(), lock);
         remoteTree = new Tree(config.getDriveDirectory(), lock);
+
+        //updated, checkt ob metadata noch nicht vorliegt und erstellt ggf und synchronisiert one way
+        if (MetaData.isNew(config.getLocalDirectory()) && MetaData.isNew(config.getDriveDirectory())) {
+            FileSync.copyDir(config.getLocalDirectory().toFile(),
+                    config.getDriveDirectory().toFile(), true, config);
+        }
+        localTree.updateJson();
+        remoteTree.updateJson();
+        ToSync toSync = Tree.compare(localTree, remoteTree);
+        sync(toSync.source, toSync.target, false);
+
         localTreeWatcher = new Thread(localTree);
         remoteTreeWatcher = new Thread(remoteTree);
 
         localTreeWatcher.start();
         remoteTreeWatcher.start();
-      
-        
     }
 
     @Override
@@ -56,7 +56,7 @@ public class FileManager implements Runnable{
             }
             ToSync toSync = Tree.compare(localTree, remoteTree);
             sync(toSync.source, toSync.target, false);
-            
+
         }
     }
 
@@ -84,33 +84,34 @@ public class FileManager implements Runnable{
     /**
      * Syncronisiert die die Dateien dien in der source list angeben sind zu dem Pfad der in Target ist
      * Ob die datei verschlüsselt oder entschlüssekt werden muss stellt die methode fest
+     *
      * @param sources
      * @param targets
      * @param syncAll
      */
     public void sync(ArrayList<File> sources, ArrayList<File> targets, boolean syncAll) {
-    	if(syncAll){
-    		FileSync.copyDir(config.getLocalDirectory().toFile(), config.getDriveDirectory().toFile(), true, config);
-    		return;
-    	}
-    		
-    	if(sources.size()!=targets.size()){
-    		return;
-    	}
-    	int len = sources.size();
-    	for(int i = 0; i<len; i++){
-    		if(isTarget(targets.get(i))){
-    			if(sources.get(i).getAbsolutePath().contains(".aes")){
-    				System.out.println("Hier muss ein Fehler vorliegen: aes soll gerade verschlüsselt werden!?");
-    			}
-    			FileSync.copyFile(sources.get(i), targets.get(i), true, config);
-    		}else{
-    			FileSync.copyFile(sources.get(i), targets.get(i), false, config);
-    		}
-    	}
+        if (syncAll) {
+            FileSync.copyDir(config.getLocalDirectory().toFile(), config.getDriveDirectory().toFile(), true, config);
+            return;
+        }
+
+        if (sources.size() != targets.size()) {
+            return;
+        }
+        int len = sources.size();
+        for (int i = 0; i < len; i++) {
+            if (isTarget(targets.get(i))) {
+                if (sources.get(i).getAbsolutePath().contains(".aes")) {
+                    System.out.println("Hier muss ein Fehler vorliegen: aes soll gerade verschlüsselt werden!?");
+                }
+                FileSync.copyFile(sources.get(i), targets.get(i), true, config);
+            } else {
+                FileSync.copyFile(sources.get(i), targets.get(i), false, config);
+            }
+        }
     }
-    
-    private boolean isTarget(File f){
-    	return f.getAbsolutePath().contains(config.getDriveDirectory().toAbsolutePath().toString());
+
+    private boolean isTarget(File f) {
+        return f.getAbsolutePath().contains(config.getDriveDirectory().toAbsolutePath().toString());
     }
 }
