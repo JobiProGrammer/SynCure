@@ -3,7 +3,6 @@ package syncure.core;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
@@ -17,6 +16,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.ArrayList;
 
 /**
  * Created by david on 29.04.17.
@@ -30,6 +30,11 @@ public class Tree implements Runnable {
     public Tree(Path path, Object lock) {
         this.path = path;
         this.lock = lock;
+    }
+
+    public ArrayList<File> compare(Tree other) {
+
+
     }
 
 
@@ -68,20 +73,10 @@ public class Tree implements Runnable {
                         for (WatchEvent<?> watchEvent : key.pollEvents()) {
                             // Get the type of the event
                             kind = watchEvent.kind();
-                            if (OVERFLOW == kind) {
-                                continue; // loop
-                            } else if (ENTRY_CREATE == kind) {
+                            if (ENTRY_CREATE == kind || ENTRY_MODIFY == kind || ENTRY_DELETE == kind) {
                                 // A new Path was created
                                 Path newPath = ((WatchEvent<Path>) watchEvent).context();
-                                // Output
-                                System.out.println("New path created: " + newPath);
-                            } else if (ENTRY_MODIFY == kind) {
-                                // modified
-                                Path newPath = ((WatchEvent<Path>) watchEvent).context();
                                 lock.notify();
-
-                                // Output
-                                System.out.println("New path modified: " + newPath);
                             }
                         }
 
@@ -102,11 +97,8 @@ public class Tree implements Runnable {
 
 
 
-    public static void main(String[] args) throws IOException,
-        InterruptedException {
-        // Folder we are going to watch
-        // Path folder =
-        // Paths.get(System.getProperty("C:\\Users\\Isuru\\Downloads"));
+    public static void main(String[] args) throws IOException, InterruptedException {
+
 
         new Thread(new Tree(FileSystems.getDefault().getPath("Test"), new Object())).start();
 
