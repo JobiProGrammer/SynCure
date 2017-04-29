@@ -50,7 +50,6 @@ public class MetaData {
 	public MetaData(Path path) {
 		this.path= path.toFile();
 		this.metaFile = new File(path.toFile().getAbsolutePath() + "\\.metadata.json");
-		
 	}
 	
 

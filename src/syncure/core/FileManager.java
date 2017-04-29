@@ -97,6 +97,12 @@ public class FileManager implements Runnable {
             return;
         }
         int len = sources.size();
+        MetaData localMeta = new MetaData(config.getLocalDirectory());
+        ArrayList<MetaFileObject> list= localMeta.getData();
+
+        MetaData targetMeta =new MetaData(config.getDriveDirectory());
+        ArrayList<MetaFileObject> list2= targetMeta.getData();
+
         for (int i = 0; i < len; i++) {
             if (isTarget(targets.get(i))) {
                 if (sources.get(i).getAbsolutePath().contains(".aes")) {
@@ -106,6 +112,26 @@ public class FileManager implements Runnable {
             } else {
                 FileSync.copyFile(sources.get(i), targets.get(i), false, config);
             }
+            int lenL = list.size();
+            long zeit=System.currentTimeMillis();
+            for(int j=0; j<lenL; j++){
+                if(list.get(j).path.equals(sources.get(i).getAbsolutePath())){
+                    list.get(j).time=zeit;
+                    localMeta.setData();
+                    break;
+                }
+            }
+
+            lenL = list2.size();
+            for(int j=0; j<lenL; j++){
+                if(list2.get(j).path.equals(sources.get(i).getAbsolutePath())){
+                    list2.get(j).time=zeit;
+                    targetMeta.setData();
+                    return;
+                }
+            }
+            list2.add(new MetaFileObject(targets.get(i).getAbsolutePath(), zeit));
+            targetMeta.setData();
         }
     }
 
