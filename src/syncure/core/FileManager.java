@@ -100,6 +100,9 @@ public class FileManager implements Runnable{
     	int len = sources.size();
     	for(int i = 0; i<len; i++){
     		if(isTarget(targets.get(i))){
+    			if(sources.get(i).getAbsolutePath().contains(".aes")){
+    				System.out.println("Hier muss ein Fehler vorliegen: aes soll gerade verschlüsselt werden!?");
+    			}
     			FileSync.copyFile(sources.get(i), targets.get(i), true, config);
     		}else{
     			FileSync.copyFile(sources.get(i), targets.get(i), false, config);
