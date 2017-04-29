@@ -24,7 +24,7 @@ public class Config {
     private Path localDirectory;
     private Path driveDirectory;
 
-    private static File configFile = new File(getUserDataDirectory()+"config.txt");
+    private static File configFile = new File(getUserDataDirectory()+"config.json");
 
 
     private Crypto crypto;
