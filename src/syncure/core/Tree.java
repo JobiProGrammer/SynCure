@@ -45,27 +45,29 @@ public class Tree implements Runnable {
         ArrayList<MetaFileObject> driveFiles = metaDrive.getData();
         ToSync toSync = new ToSync();
 
+        boolean found = false;
         for(MetaFileObject mLocal : localFiles) {
             for(MetaFileObject mDrive : driveFiles) {
                 if(!mDrive.path.contains(".aes")) {
                     continue;
-                } else {
-                    mDrive.path.replace(".aes", "");
                 }
-                if(mLocal.path.equals(mDrive.path)) {
+                if(mLocal.path.equals(mDrive.path.replace(".aes", ""))) {
                     if(mLocal.time < mDrive.time) {
-                        toSync.add(new File(mDrive.path + ".aes"), new File(mLocal.path));
+                        toSync.add(new File(mDrive.path), new File(mLocal.path));
                     } else if(mLocal.time > mDrive.time) {
-                        toSync.add(new File(mLocal.path), new File(mDrive.path + ".aes"));
+                        toSync.add(new File(mLocal.path), new File(mDrive.path));
                     }
+                    found = true;
                     break;
                 }
-
             }
-            toSync.add(new File(mLocal.path), new File(drive.path.toFile().getAbsolutePath() + mLocal.path.replace(local.path.toFile().getAbsolutePath(), "") + ".aes"));
 
+            if (!found) {
+                toSync.add(new File(mLocal.path), new File(drive.path.toFile().getAbsolutePath() + mLocal.path.replace(local.path.toFile().getAbsolutePath(), "") + ".aes"));
+            }
+            found = false;
         }
-        boolean found = false;
+
         for(MetaFileObject mDrive : driveFiles) {
             for(MetaFileObject mLocal : localFiles) {
                 if(mDrive.path.replace(".aes", "").equals(mLocal.path)) {
@@ -74,7 +76,7 @@ public class Tree implements Runnable {
                 }
             }
             if(!found) {
-                toSync.add(new File(mDrive.path + ".aes"), new File(local.path.toFile().getAbsolutePath() + mDrive.path.replace(drive.path.toFile().getAbsolutePath(), "")));
+                toSync.add(new File(mDrive.path), new File(local.path.toFile().getAbsolutePath() + mDrive.path.replace(drive.path.toFile().getAbsolutePath(), "").replace(".aes", "")));
             }
             found = false;
         }
@@ -130,9 +132,8 @@ public class Tree implements Runnable {
 
     }
 
-
     /**
-     * Updates the jason file when chanes happened
+     * Updates the json file when changes happened
      */
     private void updateJson(){
     	MetaData md = new MetaData(path);

@@ -57,7 +57,7 @@ public class MetaData {
 	
 	/**
 	 * 
-	 * @return Liste aller Dateien in Verzeichnis und allen Unterverzeichnissen
+	 * @return Liste aller Dateien im Verzeichnis und allen Unterverzeichnissen
 	 */
 	public ArrayList<MetaFileObject> getData(){
 		
