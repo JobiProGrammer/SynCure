@@ -125,12 +125,16 @@ public class Config {
 			if(cd==null)
 				throw new Exception();
 			readInto(cd);
+			
 		}catch (Exception e){
 			
 			ConfigData cd = new ConfigData("", "", "");
 			readInto(cd);
 			setConfig();
 		}
+		System.out.println("Password: "+password);
+		System.out.println("Sync: "+localDirectory);
+		System.out.println("-> "+driveDirectory);
     }
     
     
@@ -199,6 +203,11 @@ public class Config {
   	    f.mkdir();
   	    return file;
   	}
+//  	public static void main(String[] args) {
+//  		Config c=new Config(null);
+//  		c.setPassword("bla");
+//  		c.setConfig();
+//  	}
 
 }
 
