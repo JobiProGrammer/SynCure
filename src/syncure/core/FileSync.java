@@ -63,6 +63,9 @@ public class FileSync {
             else
                 data = config.getCrypto().dDecrypt(data);
 
+            //erstellt die nötigen verzeichnisse, verändert nichts falls das verzeichnis existiert
+            target.getParentFile().mkdirs();
+            //target.mkdirs();
             // write to output file
             FileOutputStream fos = new FileOutputStream(target, false);
             fos.write(data);

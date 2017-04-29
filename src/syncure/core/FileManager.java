@@ -21,7 +21,7 @@ public class FileManager implements Runnable{
      * @param config global Config object
      */
     public FileManager(Config config) {
-    	//updated checkt ob metadata noch nicht vorliegt und erstellt ggf und syncroniesiert one way
+    	//updated, checkt ob metadata noch nicht vorliegt und erstellt ggf und synchronisiert one way
     	if(MetaData.isNew(config.getLocalDirectory()) && MetaData.isNew(config.getDriveDirectory())){
     		FileSync.copyDir(config.getLocalDirectory().toFile(),
     				config.getDriveDirectory().toFile(), true, config);
