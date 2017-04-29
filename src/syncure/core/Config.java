@@ -12,14 +12,15 @@ import java.util.List;
 
 import static java.nio.file.FileSystem.*;
 
-/**
- * Created by Clemens on 29.04.17.
- */
+
 public class Config {
 
     private String password;
     private Path localDirectory;
     private Path driveDirectory;
+
+
+
     private Crypto crypto;
 
     public Config(Path configFilePath) {
@@ -71,6 +72,14 @@ public class Config {
 
     public Path getDriveDirectory() {
         return driveDirectory;
+    }
+
+    public Crypto getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(Crypto crypto) {
+        this.crypto = crypto;
     }
 
 }
