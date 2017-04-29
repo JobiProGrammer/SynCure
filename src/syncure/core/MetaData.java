@@ -135,6 +135,7 @@ public class MetaData {
 	 * lese dateien aus
 	 */
 	public void initFiles(){
+		FileIndexList = new ArrayList<MetaFileObject>();
 		recFolder(path);
 	}
 
@@ -143,7 +144,8 @@ public class MetaData {
             if (fileEntry.isDirectory()) {
             	recFolder(fileEntry);
             //verhindert das die metadata selber dabei ist
-            } else if(!source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("metadata.json")){
+            } else if(!source.getAbsolutePath().contains(".metadata.json")){
+            	System.out.println(source.getAbsolutePath());
             	addList(fileEntry, fileEntry.lastModified());
             }
         }

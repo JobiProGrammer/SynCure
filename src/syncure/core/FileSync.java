@@ -22,7 +22,7 @@ public class FileSync {
             if (fileEntry.isDirectory()) {
                 copyDir(fileEntry, Paths.get(target.getAbsolutePath(), fileEntry.getName()).toFile(), encrypt, config);
             } else {
-            	if(!source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("metadata.json")){
+            	if(!source.getAbsolutePath().contains(".metadata.json")){
             		if (encrypt) {
                         copyFile(fileEntry, Paths.get(target.getAbsolutePath(), fileEntry.getName() + ".aes").toFile(), encrypt, config);
                     } else { // cut .aes from target
@@ -43,6 +43,9 @@ public class FileSync {
      */
     public static void copyFile(File source, File target, boolean encrypt, Config config) {
         FileInputStream fis;
+        if(source.getAbsolutePath().contains(".metadata.json")){
+        	return;
+        }
         try {
             //System.out.println(selectedFile.getAbsolutePath().substring(selectedFile.getAbsolutePath().lastIndexOf(".") + 1));
             if (!encrypt && !source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("aes"))

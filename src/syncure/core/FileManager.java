@@ -8,6 +8,8 @@ import java.util.ArrayList;
  */
 public class FileManager implements Runnable{
 
+    Tree localTree;
+    Tree remoteTree;
     private Thread localTreeWatcher;
     private Thread remoteTreeWatcher;
     private final Object lock = new Object();
@@ -31,8 +33,8 @@ public class FileManager implements Runnable{
     	
         this.config = config;
         this.terminated = false;
-        Tree localTree = new Tree(config.getLocalDirectory(), lock);
-        Tree remoteTree = new Tree(config.getDriveDirectory(), lock);
+        localTree = new Tree(config.getLocalDirectory(), lock);
+        remoteTree = new Tree(config.getDriveDirectory(), lock);
         localTreeWatcher = new Thread(localTree);
         remoteTreeWatcher = new Thread(remoteTree);
 
@@ -52,18 +54,23 @@ public class FileManager implements Runnable{
             } catch (InterruptedException e) {
 
             }
-            //ArrayList<File> sources = localTreeWatcher.compare(remoteTreeWatcher);
-            //ArrayList<File> targets = remoteTreeWatcher.compare(localTreeWatcher);
-            sync(null, null, true);
+            ToSync toSync = Tree.compare(localTree, remoteTree);
+            sync(toSync.source, toSync.target, false);
             
         }
     }
 
+    /**
+     * terminates all directory tree watcher Threads
+     */
     public void terminateThreads() {
         localTreeWatcher.interrupt();
         remoteTreeWatcher.interrupt();
     }
 
+    /**
+     * terminates the Thread
+     */
     public void terminate() {
         this.terminated = true;
 
