@@ -25,8 +25,8 @@ public class FileSync {
             	if(!source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("metadata.json")){
             		if (encrypt) {
                         copyFile(fileEntry, Paths.get(target.getAbsolutePath(), fileEntry.getName() + ".aes").toFile(), encrypt, config);
-                    } else { // TODO: cut .aes from target
-                        copyFile(fileEntry, target, encrypt, config);
+                    } else { // cut .aes from target
+                        copyFile(fileEntry, new File(target.getAbsolutePath().replace(".aes", "")), encrypt, config);
                     }
             	}
             }

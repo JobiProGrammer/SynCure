@@ -1,5 +1,10 @@
 package syncure.core;
 
+/**
+ * 
+ * @author Tobias
+ *	Wraps MetaFiles Data
+ */
 public class MetaFileObject {
 	public String path;
 	public long time;

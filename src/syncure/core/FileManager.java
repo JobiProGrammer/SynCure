@@ -19,6 +19,16 @@ public class FileManager implements Runnable{
      * @param config global Config object
      */
     public FileManager(Config config) {
+    	//updated checkt ob metadata noch nicht vorliegt und erstellt ggf und syncroniesiert one way
+    	if(MetaData.isNew(config.getLocalDirectory()) && MetaData.isNew(config.getDriveDirectory())){
+    		FileSync.copyDir(config.getLocalDirectory().toFile(),
+    				config.getDriveDirectory().toFile(), true, config);
+    		MetaData md = new MetaData(config.getLocalDirectory());
+    		md.writeinitFiles();
+    		md = new MetaData(config.getDriveDirectory());
+    		md.writeinitFiles();
+    	}
+    	
         this.config = config;
         this.terminated = false;
         Tree localTree = new Tree(config.getLocalDirectory(), lock);
@@ -28,6 +38,8 @@ public class FileManager implements Runnable{
 
         localTreeWatcher.start();
         remoteTreeWatcher.start();
+      
+        
     }
 
     @Override
@@ -62,6 +74,13 @@ public class FileManager implements Runnable{
         }
     }
 
+    /**
+     * Syncronisiert die die Dateien dien in der source list angeben sind zu dem Pfad der in Target ist
+     * Ob die datei verschlüsselt oder entschlüssekt werden muss stellt die methode fest
+     * @param sources
+     * @param targets
+     * @param syncAll
+     */
     public void sync(ArrayList<File> sources, ArrayList<File> targets, boolean syncAll) {
     	if(syncAll){
     		FileSync.copyDir(config.getLocalDirectory().toFile(), config.getDriveDirectory().toFile(), true, config);

@@ -30,7 +30,11 @@ public class Config {
     private Crypto crypto;
     
     
-    
+    /**
+     * 
+     * @author Tobias
+     * Config data um alles als ein objekt zu übergeben
+     */
     private class ConfigData{
 		public String password;
 		public String localDirectory;

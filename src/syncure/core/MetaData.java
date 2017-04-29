@@ -16,7 +16,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 
-
+/**
+ * MeteData Klasse handelt die Jason Metadatei und sorgt zwischen der kommunikation vom verzeichnisbaum
+ * @author Tobias
+ *
+ */
 public class MetaData {
 	//public HashMap<String, String> data;
 	
@@ -25,16 +29,36 @@ public class MetaData {
 	
 	private ArrayList<MetaFileObject> FileIndexList = new ArrayList<MetaFileObject>();
 	
+	/**
+	 * Prüft ob das verzeichnis noch nie syncronisiert wurde
+	 * @param path
+	 * @return
+	 */
+	public static boolean isNew(Path path){
+		try {
+			FileInputStream fis = new FileInputStream(path.toFile());
+			return false;
+		}catch(Exception e){
+			return true;
+		}
+	}
+	
+	/**
+	 * Erstellt das Objekt
+	 * @param path
+	 */
 	public MetaData(Path path) {
 		this.path= path.toFile();
 		this.metaFile = new File(path.toFile().getAbsolutePath() + "\\.metadata.json");
-		
 		
 	}
 	
 
 	
-	
+	/**
+	 * 
+	 * @return Liste aller Dateien in Verzeichnis und allen Unterverzeichnissen
+	 */
 	public ArrayList<MetaFileObject> getData(){
 		
 		FileInputStream fis;
@@ -73,6 +97,10 @@ public class MetaData {
 		return FileIndexList;
 	}
 	
+	/**
+	 * Schreibe json in die metadata datei
+	 * @param FileIndexList
+	 */
 	public void setData(ArrayList<MetaFileObject> FileIndexList){
 		Gson gson = new Gson();
 		String data = gson.toJson(FileIndexList.toArray());
@@ -87,19 +115,29 @@ public class MetaData {
 		}
 	}
 	
+	/**
+	 * setzte data
+	 */
 	public void setData(){
 		setData(FileIndexList);
 	}
 	
+	/**
+	 * Schreibe json vom aktuellen dateisystem
+	 */
 	public void writeinitFiles(){
 		initFiles();
 		setData();
 	}
 	
+
+	/**
+	 * lese dateien aus
+	 */
 	public void initFiles(){
 		recFolder(path);
 	}
-	
+
 	private void recFolder(File source){
 		for (File fileEntry : source.listFiles()) {
             if (fileEntry.isDirectory()) {
