@@ -8,6 +8,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -18,6 +19,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 
+
 /**
  * Created by david on 29.04.17.
  */
@@ -27,6 +29,8 @@ public class Tree implements Runnable {
     private Object lock;
     private boolean terminated;
 
+    public Path getPath(){ return path; }
+
 
     public Tree(Path path, Object lock) {
         this.path = path;
@@ -34,10 +38,49 @@ public class Tree implements Runnable {
         this.terminated = false;
     }
 
-    public ArrayList<File> compare(Tree other) {
-        return null;
-    }
+    public static ToSync compare(Tree local, Tree drive) {
+        MetaData metaLocal = new MetaData(local.path);
+        MetaData metaDrive = new MetaData(drive.path);
+        ArrayList<MetaFileObject> localFiles = metaLocal.getData();
+        ArrayList<MetaFileObject> driveFiles = metaDrive.getData();
+        ToSync toSync = new ToSync();
 
+        for(MetaFileObject mLocal : localFiles) {
+            for(MetaFileObject mDrive : driveFiles) {
+                if(!mDrive.path.contains(".aes")) {
+                    driveFiles.remove(mDrive);
+                    continue;
+                }
+                 else {
+                    mDrive.path.replace(".aes", "");
+                }
+                if(mLocal.path.equals(mDrive.path)) {
+                    if(mLocal.time < mDrive.time) {
+                        toSync.add(new File(mDrive.path + ".aes"), new File(mLocal.path));
+                        driveFiles.remove(mDrive);
+                        localFiles.remove(mLocal);
+                    } else if(mLocal.time > mDrive.time) {
+                        toSync.add(new File(mLocal.path), new File(mDrive.path + ".aes"));
+                        driveFiles.remove(mDrive);
+                        localFiles.remove(mLocal);
+                    }
+                    break;
+                }
+
+            }
+            toSync.add(new File(mLocal.path), new File(drive.path.toFile().getAbsolutePath() + mLocal.path.replace(local.path.toFile().getAbsolutePath(), "") + ".aes"));
+
+        }
+        for(MetaFileObject mDrive : driveFiles) {
+            if(!mDrive.path.contains(".aes")) {
+                continue;
+            } else {
+                toSync.add(new File(mDrive.path + ".aes"), new File(local.path.toFile().getAbsolutePath() + mDrive.path.replace(drive.path.toFile().getAbsolutePath(), "")));
+            }
+        }
+
+        return toSync;
+    }
 
     public void run() {
         // Sanity check - Check if path is a folder
