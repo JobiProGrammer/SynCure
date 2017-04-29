@@ -43,6 +43,9 @@ public class FileSync {
      */
     public static void copyFile(File source, File target, boolean encrypt, Config config) {
         FileInputStream fis;
+        if(!source.getAbsolutePath().contains(".metadata.json")){
+        	return;
+        }
         try {
             //System.out.println(selectedFile.getAbsolutePath().substring(selectedFile.getAbsolutePath().lastIndexOf(".") + 1));
             if (!encrypt && !source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("aes"))
