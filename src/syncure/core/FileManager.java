@@ -18,7 +18,6 @@ public class FileManager implements Runnable {
 
     /**
      * Instantiates a FileManager
-     *
      * @param config global Config object
      */
     public FileManager(Config config) {
@@ -82,9 +81,8 @@ public class FileManager implements Runnable {
     }
 
     /**
-     * Syncronisiert die die Dateien dien in der source list angeben sind zu dem Pfad der in Target ist
-     * Ob die datei verschlüsselt oder entschlüssekt werden muss stellt die methode fest
-     *
+     * Synchronisiert die Dateien, die in der source list angeben sind, zu dem Pfad, der in Target ist.
+     * Ob die Datei verschlüsselt oder entschlüsselt werden muss, stellt die Methode fest.
      * @param sources
      * @param targets
      * @param syncAll
