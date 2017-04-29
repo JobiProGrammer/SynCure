@@ -52,9 +52,9 @@ public class Tree implements Runnable {
                     continue;
                 }
                 if(mLocal.path.equals(mDrive.path.replace(".aes", ""))) {
-                    if(mLocal.time < mDrive.time) {
+                    if(mLocal.time+10000 < mDrive.time) {
                         toSync.add(new File(mDrive.path), new File(mLocal.path));
-                    } else if(mLocal.time > mDrive.time) {
+                    } else if(mLocal.time > mDrive.time+10000) {
                         toSync.add(new File(mLocal.path), new File(mDrive.path));
                     }
                     found = true;

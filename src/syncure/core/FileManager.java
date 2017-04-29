@@ -97,21 +97,27 @@ public class FileManager implements Runnable {
             return;
         }
         int len = sources.size();
-        MetaData localMeta = new MetaData(config.getLocalDirectory());
-        ArrayList<MetaFileObject> list= localMeta.getData();
-
-        MetaData targetMeta =new MetaData(config.getDriveDirectory());
-        ArrayList<MetaFileObject> list2= targetMeta.getData();
-
+       
+        MetaData localMeta;
+        MetaData targetMeta;
+        
+        
         for (int i = 0; i < len; i++) {
             if (isTarget(targets.get(i))) {
                 if (sources.get(i).getAbsolutePath().contains(".aes")) {
                     System.out.println("Hier muss ein Fehler vorliegen: aes soll gerade verschlüsselt werden!?");
                 }
                 FileSync.copyFile(sources.get(i), targets.get(i), true, config);
+                localMeta = new MetaData(config.getLocalDirectory());
+                targetMeta =new MetaData(config.getDriveDirectory());
             } else {
                 FileSync.copyFile(sources.get(i), targets.get(i), false, config);
+                localMeta = new MetaData(config.getDriveDirectory());
+                targetMeta =new MetaData(config.getLocalDirectory());
             }
+            
+            ArrayList<MetaFileObject> list= localMeta.getData();
+            ArrayList<MetaFileObject> list2= targetMeta.getData();
             int lenL = list.size();
             long zeit=System.currentTimeMillis();
             for(int j=0; j<lenL; j++){
@@ -124,7 +130,7 @@ public class FileManager implements Runnable {
 
             lenL = list2.size();
             for(int j=0; j<lenL; j++){
-                if(list2.get(j).path.equals(sources.get(i).getAbsolutePath())){
+                if(list2.get(j).path.equals(targets.get(i).getAbsolutePath())){
                     list2.get(j).time=zeit;
                     targetMeta.setData();
                     return;
@@ -136,6 +142,6 @@ public class FileManager implements Runnable {
     }
 
     private boolean isTarget(File f) {
-        return f.getAbsolutePath().contains(config.getDriveDirectory().toAbsolutePath().toString());
+        return f.getAbsolutePath().contains(config.getDriveDirectory().toFile().getAbsolutePath());
     }
 }
