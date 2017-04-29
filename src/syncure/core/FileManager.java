@@ -44,6 +44,25 @@ public class FileManager implements Runnable{
     }
 
     public void sync(ArrayList<File> sources, ArrayList<File> targets, boolean syncAll) {
-
+    	if(syncAll){
+    		FileSync.copyDir(config.getLocalDirectory(), config.getDriveDirectory(), true, config);
+    		return;
+    	}
+    		
+    	if(sources.size()!=targets.size()){
+    		return;
+    	}
+    	int len = sources.size();
+    	for(int i = 0; i<len; i++){
+    		if(isTarget(targets.get(i))){
+    			FileSync.copyFile(sources.get(i), targets.get(i), true, config);
+    		}else{
+    			FileSync.copyFile(sources.get(i), targets.get(i), false, config);
+    		}
+    	}
+    }
+    
+    private boolean isTarget(File f){
+    	return f.getAbsolutePath().contains(config.getDriveDirectory().getAbsolutePath());
     }
 }
