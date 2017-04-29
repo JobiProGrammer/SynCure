@@ -63,7 +63,7 @@ public class FileSync {
             else
                 data = config.getCrypto().dDecrypt(data);
 
-            //erstellt die nötigen verzeichnisse, verändert nichts falls das verzeichnis existiert
+            //erstellt die nötigen Verzeichnisse; verändert nichts, falls das Verzeichnis existiert
             target.getParentFile().mkdirs();
             //target.mkdirs();
             // write to output file
@@ -72,6 +72,7 @@ public class FileSync {
             fos.close();
         } catch (Exception e) {
             // TODO Auto-generated catch block
+            //ZUTUN Personenkraftwagen-erzeugter fangen Block
             e.printStackTrace();
         }
     }
