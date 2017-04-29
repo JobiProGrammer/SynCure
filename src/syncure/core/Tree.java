@@ -68,6 +68,7 @@ public class Tree implements Runnable {
                         key = service.take();
 
                         synchronized (lock) {
+                        	updateJson();
                             lock.notify();
                         }
 
@@ -85,8 +86,13 @@ public class Tree implements Runnable {
             }
 
 
-
-
+    /**
+     * Updates the jason file when chanes happened
+     */
+    private void updateJson(){
+    	MetaData md = new MetaData(path.resolve("\\.metadata.json"));
+    	md.writeinitFiles();
+    }
 
     public static void main(String[] args) throws IOException,
         InterruptedException {

@@ -73,7 +73,7 @@ public class MetaData {
 		return FileIndexList;
 	}
 	
-	public void setData(){
+	public void setData(ArrayList<MetaFileObject> FileIndexList){
 		Gson gson = new Gson();
 		String data = gson.toJson(FileIndexList.toArray());
 		FileOutputStream fos;
@@ -87,6 +87,15 @@ public class MetaData {
 		}
 	}
 	
+	public void setData(){
+		setData(FileIndexList);
+	}
+	
+	public void writeinitFiles(){
+		initFiles();
+		setData();
+	}
+	
 	public void initFiles(){
 		recFolder(path);
 	}
@@ -95,7 +104,8 @@ public class MetaData {
 		for (File fileEntry : source.listFiles()) {
             if (fileEntry.isDirectory()) {
             	recFolder(fileEntry);
-            } else {
+            //verhindert das die metadata selber dabei ist
+            } else if(!source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("metadata.json")){
             	addList(fileEntry, fileEntry.lastModified());
             }
         }
@@ -105,6 +115,11 @@ public class MetaData {
 	private void addList(File source, long time){
 		FileIndexList.add(new MetaFileObject(source.getAbsolutePath(), time));
 	}
+	
+	public ArrayList<MetaFileObject> getFileIndexList(){
+		return FileIndexList;
+	}
+	
 //	public static void main(String[] args) {
 //		MetaData md = new MetaData(Paths.get("C:\\Users\\Tobias\\Documents\\GitHub"));
 //		md.getData();

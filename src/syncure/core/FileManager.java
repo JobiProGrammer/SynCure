@@ -37,6 +37,7 @@ public class FileManager implements Runnable{
             //ArrayList<File> sources = local.compare(remote);
             //ArrayList<File> targets = remote.compare(local);
             sync(null, null, true);
+            
         }
     }
 

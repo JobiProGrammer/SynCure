@@ -22,9 +22,12 @@ public class FileSync {
             if (fileEntry.isDirectory()) {
                 copyDir(fileEntry, Paths.get(target.getAbsolutePath(), fileEntry.getName()).toFile(), encrypt, config);
             } else {
-                if (encrypt) {
-                    copyFile(fileEntry, Paths.get(target.getAbsolutePath(), fileEntry.getName() + ".aes").toFile(), encrypt, config);
-                }
+            	if(!source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("metadata.json")){
+            		if (encrypt) {
+                        copyFile(fileEntry, Paths.get(target.getAbsolutePath(), fileEntry.getName() + ".aes").toFile(), encrypt, config);
+                    }
+            	}
+                
             }
         }
     }
