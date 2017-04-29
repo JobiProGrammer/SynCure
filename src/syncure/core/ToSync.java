@@ -13,6 +13,11 @@ public class ToSync {
     public ArrayList<File> source;
     public ArrayList<File> target;
 
+    public ToSync() {
+        source = new ArrayList<>();
+        target = new ArrayList<>();
+    }
+
     public void add(File source, File target) {
         this.source.add(source);
         this.target.add(target);

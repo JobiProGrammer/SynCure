@@ -11,7 +11,7 @@ import java.net.URL;
 /**
  * Created by mikonse on 29.04.2017.
  */
-public class Gui extends JPanel{
+public class Gui {
 
     private TrayIcon trayIcon;
     private SystemTray tray;
@@ -22,7 +22,7 @@ public class Gui extends JPanel{
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        JComponent filePanel = makeTextPanel("File Browser");
+        JComponent filePanel = new FileBrowserPanel();
         tabbedPane.addTab("File Browser", filePanel);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
@@ -79,7 +79,7 @@ public class Gui extends JPanel{
             if(e.getNewState()==Frame.ICONIFIED){
                 try {
                     tray.add(trayIcon);
-                    setVisible(false);
+                    frame.setVisible(false);
                     System.out.println("added to SystemTray");
                 } catch (AWTException ex) {
                     System.out.println("unable to add to tray");
@@ -88,7 +88,7 @@ public class Gui extends JPanel{
             if(e.getNewState()==7){
                 try{
                     tray.add(trayIcon);
-                    setVisible(false);
+                    frame.setVisible(false);
                     System.out.println("added to SystemTray");
                 }catch(AWTException ex){
                     System.out.println("unable to add to system tray");
@@ -96,12 +96,12 @@ public class Gui extends JPanel{
             }
             if(e.getNewState()==Frame.MAXIMIZED_BOTH){
                 tray.remove(trayIcon);
-                setVisible(true);
+                frame.setVisible(true);
                 System.out.println("Tray icon removed");
             }
             if(e.getNewState()==Frame.NORMAL){
                 tray.remove(trayIcon);
-                setVisible(true);
+                frame.setVisible(true);
                 System.out.println("Tray icon removed");
             }
         });

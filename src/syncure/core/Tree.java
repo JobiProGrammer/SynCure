@@ -112,10 +112,10 @@ public class Tree implements Runnable {
             while (!this.terminated) {
                 key = service.take();
 
-                        synchronized (lock) {
-                        	updateJson();
-                            lock.notify();
-                        }
+                    synchronized (lock) {
+                        updateJson();
+                        lock.notify();
+                    }
 
                 if (!key.reset()) {
                     break; // loop

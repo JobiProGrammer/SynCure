@@ -110,9 +110,6 @@ public class Config {
 			readInto(cd);
 			setConfig();
 		}
-		System.out.println("Password: "+password);
-		System.out.println("Sync: "+localDirectory);
-		System.out.println("-> "+driveDirectory);
     }
     
     
@@ -182,11 +179,6 @@ public class Config {
   	    f.mkdir();
   	    return file;
   	}
-//  	public static void main(String[] args) {
-//  		Config c=new Config(null);
-//  		c.setPassword("bla");
-//  		c.setConfig();
-//  	}
 
 }
 
