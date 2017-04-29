@@ -1,10 +1,6 @@
 package syncure.core;
 
-
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.StandardWatchEventKinds;
 import java.util.ArrayList;
 
 /**
@@ -32,19 +28,21 @@ public class FileManager implements Runnable{
     public void run() {
         while (true) {
             try {
-                lock.wait();
+                synchronized (lock) {
+                    lock.wait();
+                }
             } catch (InterruptedException e) {
 
             }
-            ArrayList<File> sources = local.compare(remote);
-            ArrayList<File> targets = remote.compare(local);
-            sync(sources, targets);
+            //ArrayList<File> sources = local.compare(remote);
+            //ArrayList<File> targets = remote.compare(local);
+            sync(null, null, true);
         }
     }
 
     public void sync(ArrayList<File> sources, ArrayList<File> targets, boolean syncAll) {
     	if(syncAll){
-    		FileSync.copyDir(config.getLocalDirectory(), config.getDriveDirectory(), true, config);
+    		FileSync.copyDir(config.getLocalDirectory().toFile(), config.getDriveDirectory().toFile(), true, config);
     		return;
     	}
     		
@@ -62,6 +60,6 @@ public class FileManager implements Runnable{
     }
     
     private boolean isTarget(File f){
-    	return f.getAbsolutePath().contains(config.getDriveDirectory().getAbsolutePath());
+    	return f.getAbsolutePath().contains(config.getDriveDirectory().toAbsolutePath().toString());
     }
 }
