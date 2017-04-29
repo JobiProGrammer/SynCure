@@ -135,7 +135,7 @@ public class Tree implements Runnable {
      * Updates the jason file when chanes happened
      */
     private void updateJson(){
-    	MetaData md = new MetaData(path.resolve("\\.metadata.json"));
+    	MetaData md = new MetaData(path);
     	md.writeinitFiles();
     }
     public void terminate() {

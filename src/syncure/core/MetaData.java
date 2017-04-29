@@ -144,6 +144,7 @@ public class MetaData {
             	recFolder(fileEntry);
             //verhindert das die metadata selber dabei ist
             } else if(!source.getAbsolutePath().contains(".metadata.json")){
+            	System.out.println(source.getAbsolutePath());
             	addList(fileEntry, fileEntry.lastModified());
             }
         }
