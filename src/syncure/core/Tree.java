@@ -25,11 +25,13 @@ public class Tree implements Runnable {
 
     private Path path;
     private Object lock;
+    private boolean terminated;
 
 
     public Tree(Path path, Object lock) {
         this.path = path;
         this.lock = lock;
+        this.terminated = false;
     }
 
     public ArrayList<File> compare(Tree other) {
@@ -42,48 +44,48 @@ public class Tree implements Runnable {
         try {
             Boolean isFolder = (Boolean) Files.getAttribute(path, "basic:isDirectory", NOFOLLOW_LINKS);
             if (!isFolder) {
-                    throw new IllegalArgumentException("Path: " + path
-                            + " is not a folder");
-                }
-            } catch (IOException ioe) {
-                // Folder does not exists
-                ioe.printStackTrace();
+                throw new IllegalArgumentException("Path: " + path
+                        + " is not a folder");
             }
+        } catch (IOException ioe) {
+            // Folder does not exists
+            ioe.printStackTrace();
+        }
 
-            System.out.println("Watching path: " + path);
+        System.out.println("Watching path: " + path);
 
-            // We obtain the file system of the Path
-            FileSystem fs = path.getFileSystem();
+        // We obtain the file system of the Path
+        FileSystem fs = path.getFileSystem();
 
-                // We create the new WatchService using the new try() block
-                try (WatchService service = fs.newWatchService()) {
+        // We create the new WatchService using the new try() block
+        try (WatchService service = fs.newWatchService()) {
 
-                    // We register the path to the service
-                    // We watch for creation events
-                    path.register(service, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+            // We register the path to the service
+            // We watch for creation events
+            path.register(service, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
 
-                    // Start the infinite polling loop
-                    WatchKey key = null;
-                    while (true) {
-                        key = service.take();
+            // Start the infinite polling loop
+            WatchKey key = null;
+            while (!this.terminated) {
+                key = service.take();
 
                         synchronized (lock) {
                         	updateJson();
                             lock.notify();
                         }
 
-                        if (!key.reset()) {
-                            break; // loop
-                        }
-                    }
-
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                } catch (InterruptedException ie) {
-                    ie.printStackTrace();
+                if (!key.reset()) {
+                    break; // loop
                 }
-
             }
+
+        } catch (IOException ioe) {
+
+        } catch (InterruptedException ie) {
+
+        }
+
+    }
 
 
     /**
@@ -93,14 +95,17 @@ public class Tree implements Runnable {
     	MetaData md = new MetaData(path.resolve("\\.metadata.json"));
     	md.writeinitFiles();
     }
+    public void terminate() {
+        this.terminated = true;
+    }
 
     public static void main(String[] args) throws IOException,
-        InterruptedException {
+            InterruptedException {
         // Folder we are going to watch
         // Path folder =
         // Paths.get(System.getProperty("C:\\Users\\Isuru\\Downloads"));
 
         new Thread(new Tree(FileSystems.getDefault().getPath("Test"), new Object())).start();
 
-        }
+    }
 }

@@ -8,36 +8,57 @@ import java.util.ArrayList;
  */
 public class FileManager implements Runnable{
 
-    private Tree local;
-    private Tree remote;
-    private Object lock = new Object();
+    private Thread localTreeWatcher;
+    private Thread remoteTreeWatcher;
+    private final Object lock = new Object();
     private Config config;
+    private boolean terminated;
 
+    /**
+     * Instantiates a FileManager
+     * @param config global Config object
+     */
     public FileManager(Config config) {
         this.config = config;
-        local = new Tree(config.getLocalDirectory(), lock);
-        remote = new Tree(config.getDriveDirectory(), lock);
-        Thread localThread = new Thread(local);
-        Thread remoteThread = new Thread(remote);
+        this.terminated = false;
+        Tree localTree = new Tree(config.getLocalDirectory(), lock);
+        Tree remoteTree = new Tree(config.getDriveDirectory(), lock);
+        localTreeWatcher = new Thread(localTree);
+        remoteTreeWatcher = new Thread(remoteTree);
 
-        localThread.start();
-        remoteThread.start();
+        localTreeWatcher.start();
+        remoteTreeWatcher.start();
     }
 
     @Override
     public void run() {
-        while (true) {
+        while (!terminated) {
             try {
                 synchronized (lock) {
-                    lock.wait();
+                    lock.wait();  // wait for notifications from Directory Watcher Threads
                 }
             } catch (InterruptedException e) {
 
             }
-            //ArrayList<File> sources = local.compare(remote);
-            //ArrayList<File> targets = remote.compare(local);
+            //ArrayList<File> sources = localTreeWatcher.compare(remoteTreeWatcher);
+            //ArrayList<File> targets = remoteTreeWatcher.compare(localTreeWatcher);
             sync(null, null, true);
             
+        }
+    }
+
+    public void terminateThreads() {
+        localTreeWatcher.interrupt();
+        remoteTreeWatcher.interrupt();
+    }
+
+    public void terminate() {
+        this.terminated = true;
+
+        try {
+            terminateThreads();
+        } catch (Exception e) {
+
         }
     }
 
