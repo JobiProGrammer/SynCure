@@ -4,6 +4,9 @@ import syncure.core.Config;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,15 +40,20 @@ public class FileBrowserPanel extends JPanel {
         splitPane.setDividerLocation(300);
 
         JButton refreshButton = new JButton("Refresh");
-        refreshButton.addActionListener(e -> tree = createTree());
+        refreshButton.addActionListener(e -> createTreeModel());
         treePanel.add(refreshButton, BorderLayout.PAGE_START);
 
         this.add(splitPane);
     }
 
+    private void createTreeModel() {
+        DefaultMutableTreeNode root = createDirStructure(config.getLocalDirectory().toFile());
+        TreeModel treeModel = new DefaultTreeModel(root);
+		tree.setModel(treeModel);
+        //return new JTree(root);
+    }
     private JTree createTree() {
         DefaultMutableTreeNode root = createDirStructure(config.getLocalDirectory().toFile());
-
         return new JTree(root);
     }
 
