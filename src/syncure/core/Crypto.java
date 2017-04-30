@@ -63,9 +63,9 @@ public class Crypto{
 	 * @param dir Ordner oder Datei auswählen
 	 * @return ausgewählte datei und 
 	 */
-	private static File chooseDir(boolean dir){
+	public static File chooseDir(boolean dir, File file){
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+		fileChooser.setCurrentDirectory(file);
 		if(dir)
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		JFrame frame = new JFrame();
@@ -75,6 +75,9 @@ public class Crypto{
 		    
 		}
 		return null;
+	}
+	public static File chooseDir(boolean dir){
+		return chooseDir(dir, new File(System.getProperty("user.home")));
 	}
 	
 	
