@@ -56,8 +56,16 @@ public class Tree implements Runnable {
                 }
                 if(mLocal.path.equals(mDrive.path.replace(".aes", ""))) {
                     if(mLocal.time < mDrive.time) {
+                        System.out.println("Drive neuer");
+                        System.out.println("Local time: " + mLocal.time);
+                        System.out.println("Driver time: " + mDrive.time);
+                        System.out.println(mDrive.path + " -> " mLocal.path);
                         toSync.add(new File(mDrive.path), new File(mLocal.path));
                     } else if(mLocal.time > mDrive.time) {
+                        System.out.println("Local neuer");
+                        System.out.println("Local time: " + mLocal.time);
+                        System.out.println("Driver time: " + mDrive.time);
+                        System.out.println(mDrive.path + " -> " mLocal.path);
                         toSync.add(new File(mLocal.path), new File(mDrive.path));
                     }
                     found = true;
