@@ -106,7 +106,15 @@ public class Gui {
             }
         });
 
-        frame.setSize(500, 600);
+        //Get screenwidth for readable windows on highres-devices
+        int userScreenWidth = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
+
+        //Exemplary frame.setSize(500,600) for width <= 3000 / frame.setSize(1000,1200) for width > 3000
+        if(userScreenWidth <= 3000)
+            frame.setSize(500, 600);
+        else
+            frame.setSize(1000, 1200);
+        
         frame.setResizable(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
