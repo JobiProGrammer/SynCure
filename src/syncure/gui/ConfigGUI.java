@@ -32,10 +32,10 @@ public class ConfigGUI extends JPanel implements ActionListener{
         super(new GridBagLayout());
         this.config = config;
 
-        passwordField = new JTextField(10);
-        localDirField = new JTextField(10);
+        passwordField = new JTextField(30);
+        localDirField = new JTextField(30);
         localDirField.setText(this.config.getLocalDirectory().toAbsolutePath().toString());
-        driveDirField = new JTextField(10);
+        driveDirField = new JTextField(30);
         driveDirField.setText(this.config.getDriveDirectory().toAbsolutePath().toString());
 
         c.gridy = 0;

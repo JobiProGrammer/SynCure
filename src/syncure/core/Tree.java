@@ -128,7 +128,7 @@ public class Tree implements Runnable {
                             deleted.add(element);
                             lock.notify();
                         }
-                        System.out.println("Entry deleted: " + element);
+                        //System.out.println("Entry deleted: " + element);
                     } else {
                         synchronized (lock) {
                             this.metaData.readOrUpdate();

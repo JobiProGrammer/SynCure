@@ -26,7 +26,7 @@ public class Gui {
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        JComponent filePanel = new FileBrowserPanel();
+        JComponent filePanel = new FileBrowserPanel(this.config);
         tabbedPane.addTab("File Browser", filePanel);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
@@ -114,7 +114,7 @@ public class Gui {
         int userScreenWidth = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
 
         //Exemplary frame.setSize(500,600) for width <= 3000 / frame.setSize(1000,1200) for width > 3000
-        if(userScreenWidth <= 3000)
+        if(userScreenWidth <= 1000)
             frame.setSize(500, 600);
         else
             frame.setSize(1000, 1200);

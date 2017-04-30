@@ -65,7 +65,8 @@ public class FileManager implements Runnable {
                     for (Path del : Tree.deleted) {
                         Path corresponding = getCorrespondingPath(del);
                         try {
-                            Files.delete(corresponding);
+                            deleteRecursive(corresponding.toFile());
+                            //Files.delete(corresponding);
                         } catch (IOException e) {
 
                         }
@@ -78,6 +79,24 @@ public class FileManager implements Runnable {
                     sync(toSync.source, toSync.target, false);
                 }
             }
+        }
+    }
+
+    private static void deleteRecursive(File file) throws IOException {
+        if (file.isDirectory()) {
+            for (File childFile : file.listFiles()) {
+                if (childFile.isDirectory()) {
+                    deleteRecursive(childFile);
+                } else {
+                    if (!childFile.delete()) {
+                        throw new IOException();
+                    }
+                }
+            }
+        }
+
+        if (!file.delete()) {
+            throw new IOException();
         }
     }
 
