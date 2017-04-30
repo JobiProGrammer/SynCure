@@ -54,7 +54,7 @@ public class Tree implements Runnable {
                 if(!mDrive.path.contains(".aes")) {
                     continue;
                 }
-                if(mLocal.path.equals(mDrive.path.replace(".aes", ""))) {
+                if(mLocal.path.replace(local.path.toFile().getAbsolutePath(), "").equals(mDrive.path.replace(drive.path.toFile().getAbsolutePath(), "").replace(".aes", ""))) {
                     if(mLocal.time < mDrive.time) {
                         System.out.println("Drive neuer");
                         System.out.println("Local time: " + mLocal.time);
