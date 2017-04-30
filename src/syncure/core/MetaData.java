@@ -30,12 +30,7 @@ public class MetaData {
 	 * @return
 	 */
 	public static boolean isNew(Path path){
-		try {
-			FileInputStream fis = new FileInputStream(path.toFile());
-			return false;
-		}catch(Exception e){
-			return true;
-		}
+		return !path.toFile().exists();
 	}
 	
 	/**
