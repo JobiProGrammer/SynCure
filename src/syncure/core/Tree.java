@@ -1,6 +1,8 @@
 package syncure.core;
 
 
+import com.sun.nio.file.ExtendedWatchEventModifier;
+
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
@@ -8,9 +10,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
@@ -18,6 +18,7 @@ import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 /**
@@ -28,17 +29,19 @@ public class Tree implements Runnable {
     private Path path;
     private Object lock;
     private boolean terminated;
-    private MetaData metaData;
+    public MetaData metaData;
 
-    public Path getPath(){ return path; }
-
+    public static LinkedList<Path> deleted = new LinkedList<>();
 
     public Tree(Path path, Object lock) {
         this.path = path;
         this.lock = lock;
         this.terminated = false;
+
         this.metaData = new MetaData(path);
     }
+
+    public Path getPath(){ return path; }
 
     public static ToSync compare(Tree local, Tree drive) {
         ArrayList<MetaFileObject> localFiles = local.metaData.readOrUpdate();
@@ -104,10 +107,12 @@ public class Tree implements Runnable {
 
         // We create the new WatchService using the new try() block
         try (WatchService service = fs.newWatchService()) {
-
+            
+            Kind<?>[] kinds = {ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
+            
             // We register the path to the service
             // We watch for creation events
-            path.register(service, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+            path.register(service, kinds, ExtendedWatchEventModifier.FILE_TREE);
 
             // Start the infinite polling loop
             WatchKey key = null;
@@ -115,16 +120,23 @@ public class Tree implements Runnable {
                 key = service.take();
 
                 for (WatchEvent<?> event : key.pollEvents()) {
-                    System.out.println("Kind: " + event.kind());
-                    System.out.println("Context: " + event.context());
-                    System.out.println("Count: " + event.count());
-                    System.out.println();
+                    if (event.context().toString().contains(".metadata.json")) {
+                        continue;
+                    } else if (event.kind() == ENTRY_DELETE) {
+                        Path element = path.resolve(((WatchEvent<Path>)event).context());
+                        synchronized (lock) {
+                            deleted.add(element);
+                            lock.notify();
+                        }
+                        System.out.println("Entry deleted: " + element);
+                    } else {
+                        synchronized (lock) {
+                            this.metaData.readOrUpdate();
+                            lock.notify();
+                        }
+                    }
                 }
 
-                synchronized (lock) {
-                    this.metaData.readOrUpdate();
-                    lock.notify();
-                }
 
                 if (!key.reset()) {
                     break; // loop
@@ -149,14 +161,4 @@ public class Tree implements Runnable {
     public void terminate() {
         this.terminated = true;
     }
-
-//    public static void main(String[] args) throws IOException,
-//            InterruptedException {
-//        // Folder we are going to watch
-//        // Path folder =
-//        // Paths.get(System.getProperty("C:\\Users\\Isuru\\Downloads"));
-//
-//        new Thread(new Tree(FileSystems.getDefault().getPath("Test"), new Object())).start();
-//
-//    }
 }

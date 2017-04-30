@@ -80,7 +80,6 @@ public class Config {
 		String alldata="";
 		try {
 			fis = new FileInputStream(configFile);
-		
 			//list alles aus der Datei
 			byte[] data = new byte[(int) configFile.length()];
 			fis.read(data);

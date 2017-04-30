@@ -1,5 +1,7 @@
 package syncure.gui;
 
+import syncure.core.Config;
+
 import javax.swing.*;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -15,10 +17,12 @@ public class Gui {
 
     private TrayIcon trayIcon;
     private SystemTray tray;
+    private Config config;
     public JFrame frame;
 
-    public Gui() {
+    public Gui(Config config) {
         frame = createMainFrame("SynCure");
+        this.config = config;
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -26,7 +30,7 @@ public class Gui {
         tabbedPane.addTab("File Browser", filePanel);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        JComponent configPanel = new ConfigGUI();
+        JComponent configPanel = new ConfigGUI(this.config);
         tabbedPane.addTab("Settings", configPanel);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 

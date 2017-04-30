@@ -21,7 +21,7 @@ public class Main {
         Thread managerThread = new Thread(manager);
         managerThread.start();
 
-        Gui gui = new Gui();
+        Gui gui = new Gui(config);
         gui.frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 manager.terminate();
