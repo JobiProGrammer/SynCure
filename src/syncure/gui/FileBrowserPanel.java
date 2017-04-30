@@ -63,7 +63,7 @@ public class FileBrowserPanel extends JPanel {
             for (File file : parent.listFiles()) {
                 DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(file.getName());
                 if (file.isDirectory()) {
-                    tempNode.add(createDirStructure(file));
+                    tempNode = createDirStructure(file);
                 }
                 parentNode.add(tempNode);
             }
