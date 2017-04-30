@@ -47,6 +47,8 @@ public class FileSync {
         	return;
         }
         try {
+        	System.out.println("source: "+source.getAbsolutePath());
+        	System.out.println(target.getAbsolutePath());
             //System.out.println(selectedFile.getAbsolutePath().substring(selectedFile.getAbsolutePath().lastIndexOf(".") + 1));
             if (!encrypt && !source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("aes"))
                 return;
