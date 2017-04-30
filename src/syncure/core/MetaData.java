@@ -4,16 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
+
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 
 /**
@@ -27,7 +22,7 @@ public class MetaData {
 	private File path;
 	private File metaFile;
 	
-	private ArrayList<MetaFileObject> FileIndexList = new ArrayList<MetaFileObject>();
+	private ArrayList<MetaFileObject> fileIndexList = new ArrayList<MetaFileObject>();
 	
 	/**
 	 * Prüft, ob das Verzeichnis noch nie synchronisiert wurde
@@ -50,9 +45,10 @@ public class MetaData {
 	public MetaData(Path path) {
 		this.path= path.toFile();
 		this.metaFile = new File(path.toFile().getAbsolutePath() + "\\.metadata.json");
-	}
-	
+        this.fileIndexList = new ArrayList<MetaFileObject>();
 
+        readOrUpdate();
+	}
 	
 	/**
 	 * 
@@ -71,8 +67,6 @@ public class MetaData {
 			fis.close();
 			alldata = new String(data);
 		} catch (Exception e1) {
-			e1.printStackTrace();
-			
 			//erstellt die Datei, falls sie nicht existiert
 			try {
 				metaFile.createNewFile();
@@ -86,14 +80,14 @@ public class MetaData {
 			MetaFileObject[] mto = gson.fromJson(alldata, MetaFileObject[].class);
 			if(mto==null)
 				throw new Exception();
-			FileIndexList = new ArrayList<MetaFileObject>(Arrays.asList(mto));
+			fileIndexList = new ArrayList<MetaFileObject>(Arrays.asList(mto));
 			
 		}catch (Exception e){
 			initFiles();
 			setData();
 		}
 		
-		return FileIndexList;
+		return fileIndexList;
 	}
 	
 	/**
@@ -118,46 +112,55 @@ public class MetaData {
 	 * setze data
 	 */
 	public void setData(){
-		setData(FileIndexList);
+		setData(fileIndexList);
 	}
 	
-	/**
-	 * Schreibe JSON vom aktuellen Dateisystem
-	 */
-	public void writeinitFiles(){
-		initFiles();
-		setData();
-	}
-	
+    public ArrayList<MetaFileObject> readOrUpdate() {
+	    ArrayList<MetaFileObject> tempList = new ArrayList<>();
+	    recFolder(tempList, path);
+
+	    boolean equal = true;
+	    for (MetaFileObject meta : tempList) {
+	        if (!fileIndexList.contains(meta)) {
+	            equal = false;
+	            break;
+            }
+        }
+
+        if (!equal) {
+	        initFiles();
+	        setData();
+        }
+        return this.fileIndexList;
+    }
 
 	/**
 	 * lese Dateien aus
 	 */
 	public void initFiles(){
-		FileIndexList = new ArrayList<MetaFileObject>();
-		recFolder(path);
+		recFolder(fileIndexList, path);
 	}
 
-	private void recFolder(File source){
+	private void recFolder(ArrayList<MetaFileObject> list, File source){
 		for (File fileEntry : source.listFiles()) {
             if (fileEntry.isDirectory()) {
-            	recFolder(fileEntry);
+            	recFolder(list, fileEntry);
             //verhindert, dass die metadata selber dabei ist
             } else if(!source.getAbsolutePath().contains(".metadata.json")){
-            	System.out.println(source.getAbsolutePath());
-            	addList(fileEntry, fileEntry.lastModified());
+            	//System.out.println(source.getAbsolutePath());
+            	addList(list, fileEntry, fileEntry.lastModified());
             }
         }
 	}
 
 	
-	private void addList(File source, long time){
+	private void addList(ArrayList<MetaFileObject> list, File source, long time){
 		if(!source.getAbsolutePath().substring(source.getAbsolutePath().lastIndexOf(".") + 1).equals("json"))
-			FileIndexList.add(new MetaFileObject(source.getAbsolutePath(), time));
+            list.add(new MetaFileObject(source.getAbsolutePath(), time));
 	}
 	
 	public ArrayList<MetaFileObject> getFileIndexList(){
-		return FileIndexList;
+		return fileIndexList;
 	}
 	
 //	public static void main(String[] args) {

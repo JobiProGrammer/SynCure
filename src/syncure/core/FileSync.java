@@ -73,7 +73,6 @@ public class FileSync {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             //ZUTUN Personenkraftwagen-erzeugter fangen Block
-            e.printStackTrace();
         }
     }
 

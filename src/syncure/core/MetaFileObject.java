@@ -12,4 +12,13 @@ public class MetaFileObject {
 		this.path=path;
 		this.time=time;
 	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof MetaFileObject) {
+			MetaFileObject metafile = (MetaFileObject) object;
+			return path.equals(metafile.path) && time == metafile.time;
+		}
+		return false;
+	}
 }

@@ -30,9 +30,11 @@ public class FileManager implements Runnable {
         if (MetaData.isNew(config.getLocalDirectory()) && MetaData.isNew(config.getDriveDirectory())) {
             FileSync.copyDir(config.getLocalDirectory().toFile(),
                     config.getDriveDirectory().toFile(), true, config);
+
+        } else {
+            localTree.updateJson();
+            remoteTree.updateJson();
         }
-        localTree.updateJson();
-        remoteTree.updateJson();
         ToSync toSync = Tree.compare(localTree, remoteTree);
         sync(toSync.source, toSync.target, false);
 
@@ -63,8 +65,8 @@ public class FileManager implements Runnable {
      * terminates all directory tree watcher Threads
      */
     public void terminateThreads() {
-        localTreeWatcher.interrupt();
-        remoteTreeWatcher.interrupt();
+        localTree.terminate();
+        remoteTree.terminate();
     }
 
     /**
@@ -108,36 +110,36 @@ public class FileManager implements Runnable {
                     System.out.println("Hier muss ein Fehler vorliegen: aes soll gerade verschlüsselt werden!?");
                 }
                 FileSync.copyFile(sources.get(i), targets.get(i), true, config);
-                localMeta = new MetaData(config.getLocalDirectory());
-                targetMeta =new MetaData(config.getDriveDirectory());
+                //localMeta = new MetaData(config.getLocalDirectory());
+                //targetMeta =new MetaData(config.getDriveDirectory());
             } else {
                 FileSync.copyFile(sources.get(i), targets.get(i), false, config);
-                localMeta = new MetaData(config.getDriveDirectory());
-                targetMeta =new MetaData(config.getLocalDirectory());
+                //localMeta = new MetaData(config.getDriveDirectory());
+                //targetMeta =new MetaData(config.getLocalDirectory());
             }
             
-            ArrayList<MetaFileObject> list= localMeta.getData();
-            ArrayList<MetaFileObject> list2= targetMeta.getData();
-            int lenL = list.size();
-            long zeit=System.currentTimeMillis();
-            for(int j=0; j<lenL; j++){
-                if(list.get(j).path.equals(sources.get(i).getAbsolutePath())){
-                    list.get(j).time=zeit;
-                    localMeta.setData();
-                    break;
-                }
-            }
-
-            lenL = list2.size();
-            for(int j=0; j<lenL; j++){
-                if(list2.get(j).path.equals(targets.get(i).getAbsolutePath())){
-                    list2.get(j).time=zeit;
-                    targetMeta.setData();
-                    return;
-                }
-            }
-            list2.add(new MetaFileObject(targets.get(i).getAbsolutePath(), zeit));
-            targetMeta.setData();
+//            ArrayList<MetaFileObject> list= localMeta.getData();
+//            ArrayList<MetaFileObject> list2= targetMeta.getData();
+//            int lenL = list.size();
+//            long zeit=System.currentTimeMillis();
+//            for(int j=0; j<lenL; j++){
+//                if(list.get(j).path.equals(sources.get(i).getAbsolutePath())){
+//                    list.get(j).time=zeit;
+//                    localMeta.setData();
+//                    break;
+//                }
+//            }
+//
+//            lenL = list2.size();
+//            for(int j=0; j<lenL; j++){
+//                if(list2.get(j).path.equals(targets.get(i).getAbsolutePath())){
+//                    list2.get(j).time=zeit;
+//                    targetMeta.setData();
+//                    return;
+//                }
+//            }
+//            list2.add(new MetaFileObject(targets.get(i).getAbsolutePath(), zeit));
+//            targetMeta.setData();
         }
     }
 

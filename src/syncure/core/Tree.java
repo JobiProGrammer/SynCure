@@ -28,6 +28,7 @@ public class Tree implements Runnable {
     private Path path;
     private Object lock;
     private boolean terminated;
+    private MetaData metaData;
 
     public Path getPath(){ return path; }
 
@@ -36,13 +37,12 @@ public class Tree implements Runnable {
         this.path = path;
         this.lock = lock;
         this.terminated = false;
+        this.metaData = new MetaData(path);
     }
 
     public static ToSync compare(Tree local, Tree drive) {
-        MetaData metaLocal = new MetaData(local.path);
-        MetaData metaDrive = new MetaData(drive.path);
-        ArrayList<MetaFileObject> localFiles = metaLocal.getData();
-        ArrayList<MetaFileObject> driveFiles = metaDrive.getData();
+        ArrayList<MetaFileObject> localFiles = local.metaData.readOrUpdate();
+        ArrayList<MetaFileObject> driveFiles = drive.metaData.readOrUpdate();
         ToSync toSync = new ToSync();
 
         boolean found = false;
@@ -114,10 +114,17 @@ public class Tree implements Runnable {
             while (!this.terminated) {
                 key = service.take();
 
-                    synchronized (lock) {
-                        updateJson();
-                        lock.notify();
-                    }
+                for (WatchEvent<?> event : key.pollEvents()) {
+                    System.out.println("Kind: " + event.kind());
+                    System.out.println("Context: " + event.context());
+                    System.out.println("Count: " + event.count());
+                    System.out.println();
+                }
+
+                synchronized (lock) {
+                    this.metaData.readOrUpdate();
+                    lock.notify();
+                }
 
                 if (!key.reset()) {
                     break; // loop
@@ -136,9 +143,9 @@ public class Tree implements Runnable {
      * Updates the JSON file when changes happened
      */
     public void updateJson(){
-    	MetaData md = new MetaData(path);
-    	md.writeinitFiles();
+    	this.metaData.readOrUpdate();
     }
+
     public void terminate() {
         this.terminated = true;
     }
