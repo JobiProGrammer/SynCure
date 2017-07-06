@@ -33,6 +33,7 @@ public class FileManager implements Runnable {
 
         //updated, checkt ob metadata noch nicht vorliegt und erstellt ggf und synchronisiert one way
         if (MetaData.isNew(config.getLocalDirectory()) && MetaData.isNew(config.getDriveDirectory())) {
+        	System.out.println("alles sync");
             FileSync.copyDir(config.getLocalDirectory().toFile(),
                     config.getDriveDirectory().toFile(), true, config);
 
